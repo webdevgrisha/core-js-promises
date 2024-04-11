@@ -19,7 +19,7 @@
  */
 function getPromise(number) {
   return new Promise((resolve, reject) => {
-    if (number > 0) {
+    if (number >= 0) {
       resolve();
     } else {
       reject();
@@ -118,8 +118,16 @@ function getAllOrNothing(promises) {
  * [Promise.resolve(1), Promise.resolve(2), Promise.resolve(3)] => Promise fulfilled with [1, 2, 3]
  * [Promise.resolve(1), Promise.reject(2), Promise.resolve(3)]  => Promise fulfilled with [1, null, 3]
  */
-function getAllResult(/* promises */) {
-  throw new Error('Not implemented');
+function getAllResult(promises) {
+  return Promise.allSettled(promises).then((arrObjets) => {
+    return new Promise((resolve) => {
+      const resultArr = arrObjets.map((obj) =>
+        obj.status === 'fulfilled' ? obj.value : null
+      );
+
+      resolve(resultArr);
+    });
+  });
 }
 
 /**
